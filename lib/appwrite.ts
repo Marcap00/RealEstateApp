@@ -8,6 +8,9 @@ export const config = {
     projectId: process.env.EXPO_PUBLIC_APPWRITE_PROJECT_ID,
 }
 
+console.log("Appwrite Endpoint: ", config.endpoint)
+console.log("Appwrite Project ID: ", config.projectId)
+
 export const client = new Client();
 
 client
@@ -27,21 +30,25 @@ export async function login() {
             redirectUri
         );
 
-        if (!response) throw new Error('Failed to login');
+        if (!response) throw new Error('Failed to create OAuth2 token 1');
 
-        const browserResponse = await openAuthSessionAsync(
+        const browserResult = await openAuthSessionAsync(
             response.toString(),
             redirectUri
         )
 
-        if (browserResponse.type !== 'success') throw new Error('Failed to login');
+        console.log(browserResult)
 
-        const url = new URL(browserResponse.url)
+        if (browserResult.type !== "success") {
+            throw new Error('Failed to create OAuth2 token 2');
+        }
+        console.log(browserResult.url)
+        const url = new URL(browserResult.url)
 
         const secret = url.searchParams.get('secret')?.toString()
         const userId = url.searchParams.get('userId')?.toString()
 
-        if (!secret || !userId) throw new Error('Failed to login');
+        if (!secret || !userId) throw new Error('Failed to create OAuth2 token 3');
 
         const session = await account.createSession(userId, secret);
 
@@ -56,15 +63,15 @@ export async function login() {
 
 export async function logout() {
     try {
-        await account.deleteSession('current');
-        return true;
+        const result = await account.deleteSession('current');
+        return result;
     } catch (error) {
         console.error(error);
         return false;
     }
 }
 
-export async function getUser() {
+export async function getCurrentUser() {
     try {
         const response = await account.get();
 
@@ -74,9 +81,10 @@ export async function getUser() {
             const userAvatar = avatar.getInitials(response.name)
             return {
                 ...response,
-                avatar: userAvatar
+                avatar: userAvatar.toString()
             }
         }
+        return null;
 
     } catch (error) {
         console.error(error);
