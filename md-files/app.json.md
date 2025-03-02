@@ -39,3 +39,6 @@ Then we have the specifics for each platform:
     - `"themeColor": "#000000",` : This is the theme color of your app. You can change it to your own.
     
     - `"config": {` : This is for the configuration of the app. You can add your own configurations here.
+
+
+# App.jsons
