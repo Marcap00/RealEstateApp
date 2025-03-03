@@ -67,6 +67,9 @@ const Profile = () => {
                         <Text className='text-2xl font-rubik-bold mt-2'>
                             {user?.name}
                         </Text>
+                        <Text>
+                            {user?.email}
+                        </Text>
                     </View>
                 </View>
 
